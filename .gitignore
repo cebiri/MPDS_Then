@@ -10,3 +10,6 @@ yarn-error.log
 .gitconfig
 *.bak
 backup/**
+
+# Test coverage
+coverage/
