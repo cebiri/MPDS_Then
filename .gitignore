@@ -10,3 +10,5 @@ yarn-error.log
 .gitconfig
 *.bak
 backup/**
+# Ignore Yarn upgrade logs
+=*
