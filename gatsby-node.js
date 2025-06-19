@@ -142,10 +142,10 @@ exports.createPages = ({ graphql, actions }) => {
   })
 }
 
-exports.onCreateNode = ({ node, actions, getNode }) => {
+exports.onCreateNode = async ({ node, actions, getNode }) => {
   const { createNodeField } = actions
   fmImagesToRelative(node) // convert image paths for gatsby images
-  transformFrontmatterMD(node) // convert markdown frontmatter to HTML
+  await transformFrontmatterMD(node) // convert markdown frontmatter to HTML
   if (node.internal.type === `MarkdownRemark`) {
     const gitAuthorTime = execSync(
       // last commit to repo time

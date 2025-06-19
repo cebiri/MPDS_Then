@@ -1,17 +1,26 @@
-const remark = require('remark')
-const remarkHTML = require('remark-html')
 const deepMap = require('deep-map')
 const _ = require('lodash')
 const gitRepoInfo = require('git-repo-info')
 const path = require('path')
 
+let remarkProcessor
+async function loadRemark() {
+  if (!remarkProcessor) {
+    const remarkPkg = await import('remark')
+    const remark = remarkPkg.remark || remarkPkg.default
+    const remarkHTML = (await import('remark-html')).default
+    remarkProcessor = remark().use(remarkHTML)
+  }
+}
+
 const makeHTMLNodes = (value, key) =>
-  _.isString(value) && _.isString(key) && key.slice(-3) === '_MD' // process any node with the _MD suffix as MarkDown
-    ? remark().use(remarkHTML).processSync(value).toString()
+  _.isString(value) && _.isString(key) && key.slice(-3) === '_MD'
+    ? remarkProcessor.processSync(value).toString()
     : value
 
-exports.transformFrontmatterMD = (node) => {
+exports.transformFrontmatterMD = async (node) => {
   if (node.frontmatter) {
+    await loadRemark()
     deepMap(node.frontmatter, makeHTMLNodes, { inPlace: true })
   }
 }
